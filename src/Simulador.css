@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+}
+
+.unidad-control, .memoria, .alu {
+    border: 2px solid #333;
+    padding: 10px;
+    width: 30%;
+    background-color: #f9f9f9;
+}
+
+.registro {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #000;
+    background-color: #fff;
+}
+
+.destacado {
+    background-color: yellow !important;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.destacado {
+    background-color: yellow !important;
+    transition: background-color 0.3s ease;
+}
