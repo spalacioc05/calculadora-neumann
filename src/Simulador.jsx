@@ -67,15 +67,16 @@ class UnidadDeControl {
                   this._memoria.escribir(7, [0, this._alu.getAcumulador()]); // Guardar en la posición 0111
                   this.destacar(`memoria-7`);
               }
+              this.actualizarDecodificador();
               this.destacar('acumulador', 'registro-entrada');
               this.actualizarVista();
           }
       ];
-
+  
       if (this._paso < pasos.length && this._contador < 4) {
           pasos[this._paso++]();
       } else {
-        this._paso = 0
+          this._paso = 0;
       }
   }
 
@@ -86,6 +87,27 @@ class UnidadDeControl {
       document.getElementById('registro-instrucciones').textContent = `Instrucciones: ${numberToBinaryWithNBits(this._instruccionActual ? this._instruccionActual[0] : 0, 4)}${numberToBinaryWithNBits(this._instruccionActual ? this._instruccionActual[1] : 0, 4)}`;
       document.getElementById('acumulador').textContent = `Acumulador: ${numberToBinaryWithNBits(this._alu.getAcumulador(), 8)}`;
       document.getElementById('registro-entrada').textContent = `Entrada: ${numberToBinaryWithNBits(this._alu.getEntrada(), 8)}`;
+  }
+
+  actualizarDecodificador() {
+      const tupla = this.decode();
+      document.getElementById('decodificador').textContent = tupla.opNombre;
+  }
+
+  decode() {
+      const tupla = {};
+      const opCode = numberToBinaryWithNBits(this._instruccionActual[0], 4);
+      if (opCode === "0000") {
+          tupla["opNombre"] = "+";
+      } else if (opCode === "0111") {
+          tupla["opNombre"] = "...";
+      } else if (opCode === "0110") {
+          tupla["opNombre"] = "M";
+      } else {
+          tupla["opNombre"] = "?";
+      }
+      tupla["operando"] = numberToBinaryWithNBits(this._instruccionActual[1], 4);
+      return tupla;
   }
 
   destacar(...ids) {
@@ -157,15 +179,15 @@ const Simulador = () => {
       <div className="container">
         <div className="unidad-control">
           <h2>Unidad de Control</h2>
-          <div id="contador-programa" className="registro">Contador: 0000</div>
-          <div id="registro-instrucciones" className="registro">Instrucciones: 00000000</div>
-          <div id="decodificador" className="registro">Decodificador</div>
+          <div id="decodificador" className="decodificador">+</div>
+          <div id="contador-programa" className="registro">0000</div>
+          <div id="registro-instrucciones" className="registro">00000000</div>
         </div>
 
         <div className="memoria">
           <h2>Memoria</h2>
-          <div id="registro-direcciones" className="registro">Direcciones: 0000</div>
-          <div id="registro-datos" className="registro">Datos: 00000000</div>
+          <div id="registro-direcciones" className="registro">0000</div>
+          <div id="registro-datos" className="registro">00000000</div>
           <table>
             <thead>
               <tr>
@@ -179,8 +201,8 @@ const Simulador = () => {
 
         <div className="alu">
           <h2>Unidad Aritmético-Lógica (ALU)</h2>
-          <div id="acumulador" className="registro">Acumulador: 00000000</div>
-          <div id="registro-entrada" className="registro">Entrada: 00000000</div>
+          <div id="acumulador" className="registro">00000000</div>
+          <div id="registro-entrada" className="registro">00000000</div>
         </div>
       </div>
 
