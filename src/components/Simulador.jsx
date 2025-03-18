@@ -89,27 +89,6 @@ class UnidadDeControl {
         document.getElementById('registro-entrada').textContent = `Entrada: ${numberToBinaryWithNBits(this._alu.getEntrada(), 8)}`;
     }
 
-    actualizarDecodificador() {
-        const tupla = this.decode();
-        document.getElementById('decodificador').textContent = tupla.opNombre;
-    }
-
-    decode() {
-        const tupla = {};
-        const opCode = numberToBinaryWithNBits(this._instruccionActual[0], 4);
-        if (opCode === "0000") {
-            tupla["opNombre"] = "+";
-        } else if (opCode === "0111") {
-            tupla["opNombre"] = "...";
-        } else if (opCode === "0110") {
-            tupla["opNombre"] = "M";
-        } else {
-            tupla["opNombre"] = "?";
-        }
-        tupla["operando"] = numberToBinaryWithNBits(this._instruccionActual[1], 4);
-        return tupla;
-    }
-
     destacar(...ids) {
         ids.forEach(id => document.getElementById(id)?.classList.add('destacado'));
     }
