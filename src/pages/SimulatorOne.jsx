@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ControlUnit from '../components/ControlUnit';
 import Memory from '../components/Memory';
 import ALU from '../components/ALU';
 import { LuRefreshCw } from "react-icons/lu";
 import { GrNext } from "react-icons/gr";
 import '../css/Page.css';
+import { Modal, Button } from 'react-bootstrap';
 
 function SimulatorOne() {
-
-    const [step, setStep] = useState(0)
-    const [pc, setPc] = useState(0)
-    const [direccion, setDireccion] = useState(0)
-    const [datos, setDatos] = useState(0)
+    const [step, setStep] = useState(0);
+    const [pc, setPc] = useState(0);
+    const [direccion, setDireccion] = useState(0);
+    const [datos, setDatos] = useState(0);
     const [instruccion, setInstruccion] = useState("");
-    const [opCode, setOpCode] = useState("")
-    const [aluValue, setAluValue] = useState(0)
-    const [inputValue, setInputValue] = useState(0)
+    const [opCode, setOpCode] = useState("");
+    const [aluValue, setAluValue] = useState(0);
+    const [inputValue, setInputValue] = useState(0);
     const [cycle, setCycle] = useState(1);
     const [shouldContinue, setShouldContinue] = useState(true);
+    const [showModal, setShowModal] = useState(false);
 
     const [data, setData] = useState([
         { dir: "0000", contenido: "00000100" },
@@ -113,6 +114,9 @@ function SimulatorOne() {
         window.location.reload();
     };
 
+    const handleShow = () => setShowModal(true);
+    const handleClose = () => setShowModal(false);
+
     return (
         <>
             <h1 style={{ marginTop: '7%', textAlign: 'center', color: 'white' }}>Arquitectura de Jhon Von Neumann</h1>
@@ -123,10 +127,77 @@ function SimulatorOne() {
                 <div className="button-container">
                     <button className="btn btn-white p-2 m-2" onClick={() => shouldContinue && steps()}><GrNext size={25} /></button>
                     <button className="btn btn-white p-2 m-2" onClick={reload}><LuRefreshCw size={25} /></button>
-                </div >
+                </div>
             </div>
+
+            {/* Circular Button */}
+            <button 
+                className="btn btn-primary rounded-circle" 
+                style={{ position: 'fixed', bottom: '20px', right: '20px', width: '60px', height: '60px' }} 
+                onClick={handleShow}
+            >
+                +
+            </button>
+
+            {/* Modal */}
+            <Modal show={showModal} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Pipelines</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <h5 style={{textAlign: 'center'}}><strong>(3+5)×(2+4)</strong></h5>
+                    <br/>
+                    <table className="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Ciclo</th>
+                                <th>Fetch (Memoria → Unidad de Control)</th>
+                                <th>Decode (Unidad de Control)</th>
+                                <th>Execute (ALU)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Obtener (3+5)</td>
+                                <td> ---- </td>
+                                <td> ---- </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Obtener (2+4)</td>
+                                <td>Decodificar (3+5)</td>
+                                <td> ---- </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Obtener X</td>
+                                <td>Decodificar (2+4)</td>
+                                <td>Ejecutar (3+5)</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td> ---- </td>
+                                <td>Decodificar X</td>
+                                <td> Ejecutar (2+4)</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td> ---- </td>
+                                <td> ---- </td>
+                                <td>Ejecutar 8 × 6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
-};
+}
 
 export default SimulatorOne;

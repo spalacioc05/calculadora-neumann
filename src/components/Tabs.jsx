@@ -22,12 +22,12 @@ export function Tabs() {
                 />
             </ul>
             <div className="tab-content">
-                {activeTab === 0 && (
+                {activeTab === 1 && (
                     <div className="simulator-tab-one">
                         <SimulatorOne />
                     </div>
                 )}
-                {activeTab === 1 && <SimulatorTwo />}
+                {activeTab === 0 && <SimulatorTwo />}
             </div>
         </div>
     );
