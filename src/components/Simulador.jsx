@@ -158,7 +158,7 @@ const Simulador = () => {
             <div className="container" style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                 <div className="unidad-control">
                     <h2>Unidad de Control</h2>
-                    <div id="decodificador" className="decodificador">+</div>
+                    <div id="decodificador" className="decodificador"></div>
                     <div id="contador-programa" className="registro">0000</div>
                     <div id="registro-instrucciones" className="registro">00000000</div>
                 </div>
