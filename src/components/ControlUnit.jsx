@@ -36,7 +36,7 @@ function ControlUnit({ pc, instruction, opCode, highlighted }) {
                 <InfoBox opCode={opCode} />
                 <Card.Text className="d-flex flex-column align-items-center">
                     <p><strong>Contador</strong></p>
-                    <div className={`border p-2 text-center w-75 mb-3 ${pc === highlighted ? "highlight" : ""}`} style={{ height: "40px" }}>
+                    <div className={`border p-2 text-center w-75 mb-3 ${highlighted ? "highlight" : ""}`} style={{ height: "40px" }}>
                         {pc}
                     </div>
                     <p><strong>Registro de instrucciones</strong></p>

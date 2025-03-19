@@ -19,6 +19,8 @@ function SimulatorOne() {
     const [cycle, setCycle] = useState(1);
     const [shouldContinue, setShouldContinue] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    const [highlightedStep, setHighlightedStep] = useState(""); // Nuevo estado para resaltar pasos
+    const [showEndMessage, setShowEndMessage] = useState(false); // Nuevo estado para mostrar el mensaje final
 
     const [data, setData] = useState([
         { dir: "0000", contenido: "00000100" },
@@ -45,15 +47,17 @@ function SimulatorOne() {
         switch (step) {
             case 0:
                 setDireccion(pc);
+                setHighlightedStep("memory-fetch"); // Resaltar memoria (fetch)
                 break;
             case 1:
                 setPc(pc + 1);
+                setHighlightedStep("control-unit-pc"); // Resaltar contador de programa
                 break;
             case 2:
                 const nuevaInstruccion = findDato(direccion);
                 setInstruccion(nuevaInstruccion);
                 setOpCode(nuevaInstruccion.length >= 4 ? nuevaInstruccion.substring(0, 4) : "0000");
-
+                setHighlightedStep("control-unit-decode"); // Resaltar decodificación
                 if (cycle == 4) {
                     setStep(6);
                 }
@@ -63,18 +67,18 @@ function SimulatorOne() {
                 setDireccion(parseInt(nuevaDireccion, 2));
                 const nuevosDatos = findDato(parseInt(nuevaDireccion, 2));
                 setDatos(nuevosDatos);
-
+                setHighlightedStep("memory-read"); // Resaltar lectura de memoria
                 if (cycle == 3) {
                     setStep(5);
                 }
-
-                break
+                break;
             case 4:
                 setStep(0);
                 if (cycle === 1) {
                     setInputValue(datos);
                     setAluValue(datos);
                     setCycle(2);
+                    setHighlightedStep("alu-load"); // Resaltar carga en ALU
                 } else if (cycle == 2) {
                     setInputValue(datos);
                     const valor1 = parseInt(aluValue, 2);
@@ -84,6 +88,7 @@ function SimulatorOne() {
 
                     setAluValue(resultado);
                     setCycle(3);
+                    setHighlightedStep("alu-execute"); // Resaltar ejecución en ALU
                 }
                 break;
             case 5:
@@ -97,15 +102,10 @@ function SimulatorOne() {
 
                 setCycle(4);
                 setStep(0);
+                setHighlightedStep("memory-write"); // Resaltar escritura en memoria
                 break;
             case 6:
-                if (shouldContinue) {
-                    setStep(0);
-                    setCycle(1);
-                    setShouldContinue(false);
-                } else {
-                    return;
-                }
+                setShowEndMessage(true); // Mostrar mensaje final
                 break;
         }
     };
@@ -116,14 +116,15 @@ function SimulatorOne() {
 
     const handleShow = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
+    const handleEndMessageClose = () => setShowEndMessage(false); // Cerrar el mensaje final
 
     return (
         <>
             <h1 style={{ marginTop: '7%', textAlign: 'center', color: 'white' }}>Arquitectura de Jhon Von Neumann</h1>
             <div className='simulator-container'>
-                <ControlUnit pc={toBinary(pc, 4)} instruction={instruccion} opCode={opCode} />
-                <Memory data={data} number={toBinary(direccion, 4)} />
-                <ALU aluValue={aluValue} inputValue={inputValue} />
+                <ControlUnit pc={toBinary(pc, 4)} instruction={instruccion} opCode={opCode} highlighted={highlightedStep === "control-unit-pc" || highlightedStep === "control-unit-decode"} />
+                <Memory data={data} number={toBinary(direccion, 4)} highlightedDir={highlightedStep === "memory-fetch" || highlightedStep === "memory-read" ? toBinary(direccion, 4) : ""} highlightedData={highlightedStep === "memory-write" ? aluValue : ""} />
+                <ALU aluValue={aluValue} inputValue={inputValue} highlighted={highlightedStep === "alu-load" || highlightedStep === "alu-execute" ? aluValue : ""} />
                 <div className="button-container">
                     <button className="btn btn-white p-2 m-2" onClick={() => shouldContinue && steps()}><GrNext size={25} /></button>
                     <button className="btn btn-white p-2 m-2" onClick={reload}><LuRefreshCw size={25} /></button>
@@ -193,6 +194,21 @@ function SimulatorOne() {
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Final Message Modal */}
+            <Modal show={showEndMessage} onHide={handleEndMessageClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Simulación Finalizada</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>El ciclo de instrucciones ha finalizado correctamente.</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleEndMessageClose}>
+                        Aceptar
                     </Button>
                 </Modal.Footer>
             </Modal>
